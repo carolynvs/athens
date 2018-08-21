@@ -41,5 +41,5 @@ deploy:
   provider: script
   script: make docker-push
   on:
-    repo: gomods/athens
+    repo: carolynvs/athens
     all_branches: true
