@@ -1,5 +1,6 @@
 services:
   - docker
+sudo: false
 language: go
 install: false
 go:

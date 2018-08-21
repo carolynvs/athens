@@ -6,8 +6,8 @@ set -xeuo pipefail
 # Manually set the registry to a docker registry where you have push access to test this script.
 REGISTRY=${REGISTRY:-gomods/}
 
-VERSION=$(git describe --tags --abbrev=7 --dirty)
-BRANCH=$(git rev-parse --abbrev-ref HEAD)
+VERSION=${VERSION:-$(git describe --tags --abbrev=7 --dirty | echo $TRAVIS_TAG)}
+BRANCH=${BRANCH:-$(git rev-parse --abbrev-ref HEAD | echo $TRAVIS_BRANCH)}
 REPO_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null && pwd )/"
 
 # mutable tag is the docker image tag that we will reuse between pushes, it is not a stable tag like a SHA or version.
