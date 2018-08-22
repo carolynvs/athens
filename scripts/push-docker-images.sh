@@ -3,14 +3,25 @@
 # Push our docker images to a registry
 set -xeuo pipefail
 
-# Manually set the registry to a docker registry where you have push access to test this script.
 REGISTRY=${REGISTRY:-gomods/}
-VERSION=${VERSION:-$(git describe --tags --abbrev=7 --dirty)}
-BRANCH=${BRANCH:-$(git rev-parse --abbrev-ref HEAD)}
+
+# Use the travis variables when available because travis clones different than what is on a local dev machine
+# VERSION = the tag if present, otherwise the short commit hash
+# BRANCH = the current branch, empty if not on a branch
+if [[ "${TRAVIS-}" == "true" ]]; then
+    VERSION=${TRAVIS_TAG:-$TRAVIS_COMMIT::7}
+    BRANCH=${TRAVIS_BRANCH}
+else
+    TAG=$(git describe --tags --exact-match 2> /dev/null || true)
+    COMMIT=$(git rev-parse --short=7 HEAD)
+    VERSION=${VERSION:-${TAG:-${COMMIT}}}
+    BRANCH=${BRANCH:-$(git symbolic-ref -q --short HEAD || echo "")}
+fi
+
+exit
 
 # mutable tag is the docker image tag that we will reuse between pushes, it is not a stable tag like a SHA or version.
-MUTABLE_TAG=${MUTABLE_TAG:-} # defaulted below based on the branch
-if [[ -z "$MUTABLE_TAG" ]]; then
+if [[ "${MUTABLE_TAG:-}" == "" ]]; then
     # tagged build
     if [[ "$BRANCH" == "HEAD" ]]; then
         MUTABLE_TAG="latest"
