@@ -2,7 +2,7 @@ services:
   - docker
 sudo: false
 git: # Don't do shallow clones
-  depth: 9999999
+  depth: false
 language: go
 install: false
 go:
